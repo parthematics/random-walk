@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Random Walk Simulation</title>
+  </head>
+  <body>
+    <canvas id="randomWalkCanvas" width="800" height="600"></canvas>
+    <script>
+      class RandomWalk {
+        constructor(canvas, stepSize) {
+          this.canvas = canvas;
+          this.ctx = canvas.getContext("2d");
+          this.stepSize = stepSize;
+          this.initialize();
+        }
+        initialize() {
+          this.x = this.canvas.width / 2;
+          this.y = this.canvas.height / 2;
+          this.ctx.moveTo(this.x, this.y);
+        }
+        step() {
+          const choice = Math.floor(Math.random() * 4);
+          switch (choice) {
+            case 0:
+              this.x += this.stepSize;
+              break;
+            case 1:
+              this.x -= this.stepSize;
+              break;
+            case 2:
+              this.y += this.stepSize;
+              break;
+            case 3:
+              this.y -= this.stepSize;
+              break;
+          }
+          this.draw();
+        }
+
+        draw() {
+          this.ctx.lineTo(this.x, this.y);
+          this.ctx.stroke();
+        }
+        onResize() {
+          this.initialize();
+        }
+
+        animate(steps) {
+          if (steps === 0) return;
+
+          this.step();
+          window.requestAnimationFrame(() => this.animate(steps - 1));
+        }
+      }
+
+      window.onload = () => {
+        let randomWalk;
+        const canvas = document.getElementById("randomWalkCanvas");
+        resizeCanvas(canvas);
+        const steps = parseInt(
+          prompt("enter number of steps for the random walk", "1000"),
+          10
+        );
+        const stepSize = parseInt(prompt("enter step size", "5"), 10);
+        if (!isNaN(steps) && steps > 0 && !isNaN(stepSize) && stepSize > 0) {
+          randomWalk = new RandomWalk(canvas, stepSize);
+          randomWalk.animate(steps);
+        } else {
+          alert("please enter valid numbers");
+          window.location.reload();
+        }
+      };
+
+      function resizeCanvas(canvas, randomWalk) {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        if (randomWalk) randomWalk.onResize();
+      }
+    </script>
+  </body>
+</html>
